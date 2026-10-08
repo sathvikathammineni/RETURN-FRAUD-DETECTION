@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Fraud Detection System - Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="auth-page">
+
+    <main class="auth-wrapper">
+
+        <header class="auth-header">
+            <h1>Return Fraud Detection System</h1>
+            <p>Sign in to submit or review return requests.</p>
+        </header>
+
+        <section class="auth-card">
+
+            <div class="auth-tabs">
+                <button type="button"
+                        id="customerTab"
+                        class="auth-tab active"
+                        onclick="switchMode('customer')">
+                    Customer
+                </button>
+
+                <button type="button"
+                        id="staffTab"
+                        class="auth-tab"
+                        onclick="switchMode('staff')">
+                    Staff admin
+                </button>
+            </div>
+
+            {% if error %}
+                <p class="auth-error">{{ error }}</p>
+            {% endif %}
+
+            <!-- Customer login -->
+            <form id="customerForm"
+                  action="{{ url_for('login') }}"
+                  method="POST">
+
+                <label for="customerEmail">Email</label>
+                <input type="email"
+                       id="customerEmail"
+                       name="email"
+                       placeholder="Enter your email"
+                       autocomplete="email"
+                       required>
+
+                <label for="customerPassword">Password</label>
+                <input type="password"
+                       id="customerPassword"
+                       name="password"
+                       placeholder="Enter your password"
+                       autocomplete="current-password"
+                       required>
+
+                <button type="submit" class="auth-submit">
+                    Log in
+                </button>
+
+                <p class="auth-footer">
+                    <a href="{{ url_for('register') }}">
+                        Create a customer account
+                    </a>
+                </p>
+            </form>
+
+            <!-- Staff login -->
+            <form id="staffForm"
+                  action="{{ url_for('staff_login') }}"
+                  method="POST"
+                  hidden>
+
+                <label for="staffEmail">Email</label>
+                <input type="email"
+                       id="staffEmail"
+                       name="email"
+                       value="staff@store.com"
+                       autocomplete="username"
+                       required>
+
+                <label for="staffPassword">Password</label>
+                <input type="password"
+                       id="staffPassword"
+                       name="password"
+                       value="Staff123!"
+                       autocomplete="current-password"
+                       required>
+
+                <button type="submit" class="auth-submit">
+                    Log in
+                </button>
+
+                <p class="auth-hint">
+                    Demo staff login is pre-filled.
+                </p>
+            </form>
+
+        </section>
+    </main>
+
+    <script>
+        function switchMode(mode) {
+            const customerMode = mode === "customer";
+
+            document.getElementById("customerForm").hidden =
+                !customerMode;
+
+            document.getElementById("staffForm").hidden =
+                customerMode;
+
+            document.getElementById("customerTab").classList.toggle(
+                "active", customerMode
+            );
+
+            document.getElementById("staffTab").classList.toggle(
+                "active", !customerMode
+            );
+        }
+
+        // Keep the staff tab selected when showing a staff login error.
+        {% if mode == 'staff' %}
+            switchMode("staff");
+        {% endif %}
+    </script>
+
+</body>
+</html>
+

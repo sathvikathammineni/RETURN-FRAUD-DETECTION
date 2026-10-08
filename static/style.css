@@ -1,0 +1,387 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef2f6;
+    color: #14213d;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-container {
+    background: white;
+    width: 100%;
+    max-width: 420px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 25px;
+    text-align: center;
+}
+
+.login-container > p {
+    text-align: center;
+    color: #5b6b82;
+}
+
+label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd4df;
+    border-radius: 6px;
+}
+
+button {
+    width: 100%;
+    margin-top: 22px;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #1f4fd8;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #163bb0;
+}
+
+a {
+    color: #1f4fd8;
+}
+
+.error {
+    color: red !important;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd4df;
+    border-radius: 6px;
+    background: white;
+    font-size: 15px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+.login-container ul {
+    line-height: 1.8;
+}
+```css
+/* Return request dashboard */
+
+body.return-page {
+    display: block;
+    min-height: 100vh;
+    background: #0d1422;
+    color: #f3f6fc;
+    padding: 30px 20px;
+}
+
+.return-dashboard {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    text-align: left;
+    color: #ffffff;
+}
+
+.page-header p {
+    color: #9eb4d3;
+}
+
+.policy-box {
+    background: #172131;
+    border: 1px solid #293b54;
+    border-left: 4px solid #80a5ff;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 18px;
+}
+
+.policy-box h3 {
+    margin: 0 0 8px;
+}
+
+.policy-box p {
+    margin: 0;
+    color: #9eb4d3;
+}
+
+.return-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+}
+
+.panel {
+    background: #172131;
+    border: 1px solid #293b54;
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 0;
+}
+
+.panel h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.return-page label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+.return-page input:not([type="checkbox"]),
+.return-page select {
+    width: 100%;
+    padding: 12px;
+    background: #0d1422;
+    color: #f3f6fc;
+    border: 1px solid #304158;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.return-page input[type="date"] {
+    color-scheme: dark;
+}
+
+.return-page .field-note {
+    color: #9eb4d3;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.return-page .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+}
+
+.return-page .checkbox-label input {
+    width: auto;
+}
+
+.return-page .submit-button {
+    background: #7da0ff;
+    color: white;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.return-page .submit-button:hover {
+    background: #5d83ec;
+}
+
+.request-item {
+    border-top: 1px solid #293b54;
+    padding: 15px 0;
+}
+
+.request-item h3 {
+    margin-bottom: 8px;
+}
+
+.request-item p,
+.empty-message {
+    color: #9eb4d3;
+    font-size: 14px;
+}
+
+.status-label {
+    display: inline-block;
+    background: #443517;
+    color: #ffd166;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.message {
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.success {
+    background: #173a2d;
+    color: #8fe3b3;
+}
+
+.error {
+    background: #451f28;
+    color: #ffb4be;
+}
+
+.risk-result {
+    color: #ffd166;
+}
+
+@media (max-width: 700px) {
+    .return-columns {
+        grid-template-columns: 1fr;
+    }
+}
+/* White customer return form */
+
+body.return-page {
+    display: block;
+    min-height: 100vh;
+    padding: 30px 20px;
+    background: #eef2f6;
+    color: #14213d;
+}
+
+.return-container {
+    background: white;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+}
+
+.return-container h1 {
+    text-align: center;
+    font-size: 25px;
+    color: #14213d;
+}
+
+.return-container .subtitle {
+    text-align: center;
+    color: #5b6b82;
+    margin-bottom: 25px;
+}
+
+.return-container .policy-box {
+    background: #f5f8ff;
+    border: 1px solid #d7e2f5;
+    border-left: 4px solid #1f4fd8;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 22px;
+}
+
+.return-container .policy-box h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.return-container .policy-box p {
+    color: #5b6b82;
+    margin-bottom: 0;
+}
+
+.return-container label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+.return-container input:not([type="checkbox"]),
+.return-container select {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: #14213d;
+    border: 1px solid #ccd4df;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.return-container input[type="date"] {
+    color-scheme: light;
+}
+
+.return-container .field-note {
+    color: #5b6b82;
+    font-size: 13px;
+    margin-top: 7px;
+}
+
+.return-container .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+}
+
+.return-container .checkbox-label input {
+    width: auto;
+}
+
+.return-container button {
+    width: 100%;
+    background: #1f4fd8;
+    color: white;
+    padding: 13px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 22px;
+}
+
+.return-container button:hover {
+    background: #163bb0;
+}
+
+.return-container .message {
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.return-container .success {
+    background: #e8f7ee;
+    color: #17663a;
+}
+
+.return-container .error {
+    background: #fdebed;
+    color: #b42332;
+}
+
+.return-container .back-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.return-container a {
+    color: #1f4fd8;
+}

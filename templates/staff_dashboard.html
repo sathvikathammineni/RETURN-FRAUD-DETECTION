@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Review Dashboard</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #fff;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header, .request {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header { margin-bottom: 25px; }
+
+        h1 { font-size: 26px; }
+        h2 { font-size: 19px; }
+
+        .muted {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .panel, .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .request {
+            border-top: 1px solid #eee;
+            padding: 17px 0;
+        }
+
+        .request-name {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            color: #222;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .button:hover { background: #f3f3f3; }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .actions form { margin: 0; }
+
+        .clear-panel {
+            background: #fff7f7;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .clear-panel h2 {
+            color: #b91c1c;
+            margin-top: 0;
+        }
+
+        .clear-button {
+            background: #dc2626;
+            color: white;
+            border: 1px solid #dc2626;
+        }
+
+        .clear-button:hover {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .risk {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 5px 9px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .high {
+            color: #a3261c;
+            background: #fff0ed;
+        }
+
+        .low {
+            color: #176b43;
+            background: #eaf7ef;
+        }
+
+        .message {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .empty {
+            padding: 12px 0;
+            color: #666;
+        }
+
+        .refresh-note { margin-bottom: 15px; }
+
+        @media (max-width: 700px) {
+            body { padding: 14px; }
+
+            .cards { grid-template-columns: repeat(2, 1fr); }
+
+            .request, .header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <header class="header">
+        <div>
+            <h1>Return Fraud Detection System</h1>
+            <p class="muted">Staff review dashboard</p>
+        </div>
+
+        <div class="actions">
+            <button class="button" type="button"
+                    onclick="window.location.reload()">
+                Refresh Dashboard
+            </button>
+
+            <a class="button" href="{{ url_for('logout') }}">
+                Log out
+            </a>
+        </div>
+    </header>
+
+    {% for message in get_flashed_messages() %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+
+    <!-- NEW: CLEAR ALL DATA SECTION -->
+    <section class="clear-panel">
+        <h2>Clear All Application Data</h2>
+
+        <p class="muted">
+            This action permanently deletes all customer accounts
+            and return requests from the application database.
+            Customers will need to register again. Back up your
+            database before proceeding.
+        </p>
+
+        <form action="{{ url_for('clear_all_data') }}"
+              method="POST"
+              onsubmit="return confirmClearData();">
+
+            <input type="hidden"
+                   name="confirmation"
+                   id="clearConfirmation">
+
+            <button class="button clear-button" type="submit">
+                Clear All Data
+            </button>
+        </form>
+    </section>
+    <!-- END OF NEW SECTION -->
+
+    <p class="muted refresh-note">
+        Refresh the dashboard to load the latest requests and staff decisions.
+    </p>
+
+    {% set requests_data = all_returns|default([]) %}
+    {% set pending_data = pending_returns|default([]) %}
+
+    {% if not requests_data and all_returns is not defined %}
+        {% set requests_data = requests_list|default([]) + approved_requests|default([]) + reviewed_cases|default([]) %}
+    {% endif %}
+
+    {% if not pending_data and requests_list is defined %}
+        {% set pending_data = requests_list %}
+    {% endif %}
+
+    <section class="cards">
+        <div class="card">
+            <div class="number">{{ total_requests|default(requests_data|length) }}</div>
+            <div class="muted">Total requests</div>
+        </div>
+
+        <div class="card">
+            <div class="number">
+                {{ requests_data
+                   |selectattr('status', 'equalto', 'Auto-approved')
+                   |list|length
+                   +
+                   requests_data
+                   |selectattr('status', 'equalto', 'Accepted')
+                   |list|length }}
+            </div>
+            <div class="muted">Approved requests</div>
+        </div>
+
+        <div class="card">
+            <div class="number">{{ pending_data|length }}</div>
+            <div class="muted">Awaiting staff review</div>
+        </div>
+
+        <div class="card">
+            <div class="number">
+                {{ requests_data
+                   |selectattr('status', 'equalto', 'Rejected')
+                   |list|length }}
+            </div>
+            <div class="muted">Rejected requests</div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Review Queue</h2>
+
+        <p class="muted">
+            Return requests that require staff review appear here.
+        </p>
+
+        {% for item in pending_data %}
+        <div class="request">
+            <div>
+                <div class="request-name">
+                    {{ item['product']|default('Return request') }}
+
+                    <span class="risk high">
+                        Risk {{ item['risk_score']|default(0) }}/100
+                    </span>
+                </div>
+
+                <div class="muted">
+                    Tracking ID: {{ item['tracking_id']|default('Not assigned', true) }}
+                </div>
+
+                <div class="muted">
+                    Customer: {{ item['name']|default('Unknown') }}
+                    ({{ item['email']|default('No email') }})
+                </div>
+
+                <div class="muted">
+                    Item value: ₹{{ "%.2f"|format(item['price']|default(0)|float) }}
+                </div>
+
+                <div class="muted">
+                    Reason: {{ item['reason']|default('Not provided') }}
+                </div>
+
+                <div class="muted">
+                    Status: {{ item['status']|default('Under Staff Review') }}
+                </div>
+            </div>
+
+            <div class="actions">
+                <form action="{{ url_for('staff_decision', return_id=item['id']) }}"
+                      method="post">
+                    <input type="hidden" name="decision" value="Accepted">
+                    <button class="button" type="submit">Accept</button>
+                </form>
+
+                <form action="{{ url_for('staff_decision', return_id=item['id']) }}"
+                      method="post">
+                    <input type="hidden" name="decision" value="Rejected">
+                    <button class="button" type="submit">Reject</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+            <p class="empty">
+                No requests are waiting for staff review.
+            </p>
+        {% endfor %}
+    </section>
+
+    <section class="panel">
+        <h2>All Customer Requests</h2>
+
+        {% for item in requests_data %}
+        <div class="request">
+            <div>
+                <div class="request-name">
+                    {{ item['product']|default('Return request') }}
+
+                    <span class="risk
+                        {% if item['status']|default('') in ['Auto-approved', 'Accepted'] %}
+                            low
+                        {% else %}
+                            high
+                        {% endif %}">
+                        {{ item['status']|default('Unknown status') }}
+                    </span>
+                </div>
+
+                <div class="muted">
+                    Tracking ID: {{ item['tracking_id']|default('Not assigned', true) }}
+                </div>
+
+                <div class="muted">
+                    Customer: {{ item['name']|default('Unknown') }}
+                    ({{ item['email']|default('No email') }})
+                </div>
+
+                <div class="muted">
+                    Item value: ₹{{ "%.2f"|format(item['price']|default(0)|float) }}
+                    |
+                    Risk score: {{ item['risk_score']|default(0) }}/100
+                </div>
+
+                <div class="muted">
+                    Reason: {{ item['reason']|default('Not provided') }}
+                </div>
+            </div>
+        </div>
+        {% else %}
+            <p class="empty">
+                No customer requests have been submitted yet.
+            </p>
+        {% endfor %}
+    </section>
+
+</div>
+
+<script>
+function confirmClearData() {
+    const firstConfirmation = confirm(
+        "WARNING: This will permanently delete ALL customer accounts and ALL return requests. Continue?"
+    );
+
+    if (!firstConfirmation) {
+        return false;
+    }
+
+    const typed = prompt(
+        "To confirm permanent deletion, type exactly: CLEAR ALL DATA"
+    );
+
+    if (typed !== "CLEAR ALL DATA") {
+        alert("Confirmation did not match. No data was deleted.");
+        return false;
+    }
+
+    document.getElementById("clearConfirmation").value = typed;
+    return true;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Fraud Detection System</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #202938;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        a { color: #2563eb; text-decoration: none; }
+
+        .logout {
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            padding: 9px 14px;
+            color: #374151;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 18px;
+        }
+
+        .welcome { margin-bottom: 22px; }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+        }
+
+        h1, h2, h3 { margin-top: 0; }
+        h1 { font-size: 27px; }
+        h2 { font-size: 21px; }
+        h3 { font-size: 17px; }
+
+        .muted { color: #64748b; font-size: 14px; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 15px 0 7px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #bfdbfe;
+            border-color: #2563eb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 14px;
+        }
+
+        .check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0;
+            font-weight: normal;
+        }
+
+        .check input { width: auto; }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: 0;
+            border-radius: 7px;
+            padding: 12px 18px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover { background: #1d4ed8; }
+
+        .full { width: 100%; margin-top: 10px; }
+
+        .alert {
+            padding: 13px 15px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        .error {
+            color: #991b1b;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+        }
+
+        .success {
+            color: #166534;
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+        }
+
+        .result-score {
+            font-size: 35px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .low { color: #15803d; }
+        .high { color: #b91c1c; }
+
+        .status {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: bold;
+            background: #f1f5f9;
+        }
+
+        .status.low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 18px 0;
+        }
+
+        .detail {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .detail strong {
+            display: block;
+            margin-top: 7px;
+        }
+
+        .timeline {
+            border-left: 2px solid #dbeafe;
+            margin: 20px 0 0 8px;
+            padding-left: 20px;
+        }
+
+        .event {
+            position: relative;
+            padding-bottom: 22px;
+        }
+
+        .event::before {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #2563eb;
+            border-radius: 50%;
+            left: -26px;
+            top: 4px;
+        }
+
+        .event p { margin: 5px 0; }
+
+        .tracking-id {
+            font-size: 18px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 18px;
+            z-index: 10;
+        }
+
+        .popup {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+        }
+
+        .popup h2 { margin-bottom: 8px; }
+        .popup button { margin-top: 15px; }
+
+        @media (max-width: 800px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            header { padding: 15px; }
+            header h2 { font-size: 17px; }
+            .card { padding: 18px; }
+            .grid, .details { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h2>Return Fraud Detection System</h2>
+    <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+</header>
+
+<main>
+    <div class="welcome">
+        <h1>Welcome, {{ name }}!</h1>
+        <p class="muted">
+            Submit a return request and check its risk result and tracking details.
+        </p>
+    </div>
+
+    {% if error %}
+        <div class="alert error">{{ error }}</div>
+    {% endif %}
+
+    <div class="layout">
+        <section class="card">
+            <h2>Submit Return Request</h2>
+            <p class="muted">
+                Enter the order and package details accurately.
+            </p>
+
+            <form action="{{ url_for('submit_return') }}" method="POST">
+                <label for="product">Product Name</label>
+                <input id="product" name="product" type="text"
+                       placeholder="Example: Laptop" required>
+
+                <div class="grid">
+                    <div>
+                        <label for="price">Item Value (₹)</label>
+                        <input id="price" name="price" type="number"
+                               min="0.01" step="0.01"
+                               placeholder="Example: 25000" required>
+                    </div>
+                    <div>
+                        <label for="account_age">Account Age (days)</label>
+                        <input id="account_age" name="account_age"
+                               type="number" min="0"
+                               value="30" required>
+                    </div>
+                </div>
+
+                <label for="reason">Return Reason</label>
+                <select id="reason" name="reason" required>
+                    <option value="">Select a reason</option>
+                    <option value="Damaged Item">Damaged Item</option>
+                    <option value="Wrong Item">Wrong Item</option>
+                    <option value="Missing Item">Missing Item</option>
+                    <option value="Changed Mind">Changed Mind</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <div class="grid">
+                    <div>
+                        <label for="expected_weight">
+                            Expected Package Weight (g)
+                        </label>
+                        <input id="expected_weight" name="expected_weight"
+                               type="number" min="0.01" step="0.01"
+                               placeholder="Example: 1000" required>
+                    </div>
+                    <div>
+                        <label for="received_weight">
+                            Received Package Weight (g)
+                        </label>
+                        <input id="received_weight" name="received_weight"
+                               type="number" min="0" step="0.01"
+                               placeholder="Example: 700" required>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <label for="order_date">Order Date</label>
+                        <input id="order_date" name="order_date"
+                               type="date">
+                    </div>
+                    <div>
+                        <label for="delivery_date">Delivery Date</label>
+                        <input id="delivery_date" name="delivery_date"
+                               type="date" max="{{ today }}">
+                    </div>
+                </div>
+
+                <label for="return_request_date">Return Request Date</label>
+                <input id="return_request_date" name="return_request_date"
+                       type="date" value="{{ today }}" max="{{ today }}" required>
+
+                <label class="check">
+                    <input type="checkbox" name="new_card" value="1">
+                    New payment card used
+                </label>
+
+                <button class="full" type="submit">
+                    Submit Return Request
+                </button>
+            </form>
+        </section>
+
+        <section>
+            {% for item in returns %}
+                <div class="card">
+                    <h2>Latest Return Request</h2>
+
+                    <p class="muted">Tracking ID</p>
+                    <p class="tracking-id">{{ item.tracking_id }}</p>
+
+                    <div class="details">
+                        <div class="detail">
+                            <span class="muted">Risk Score</span>
+                            <strong>{{ item.risk_score }} / 100</strong>
+                        </div>
+                        <div class="detail">
+                            <span class="muted">Risk Level</span>
+                            <strong>
+                                <span class="status {{ item.risk_level|lower }}">
+                                    {{ item.risk_level }} Risk
+                                </span>
+                            </strong>
+                        </div>
+                        <div class="detail">
+                            <span class="muted">Request Status</span>
+                            <strong>{{ item.status }}</strong>
+                        </div>
+                        <div class="detail">
+                            <span class="muted">Product</span>
+                            <strong>{{ item.product }}</strong>
+                        </div>
+                    </div>
+
+                    <h3>Return Tracking Timeline</h3>
+                    <p class="muted">
+                        Future dates are estimates, not live courier updates.
+                    </p>
+
+                    <div class="timeline">
+                        {% for event in item.tracking_events %}
+                            <div class="event">
+                                <strong>{{ event.title }}</strong>
+                                <p>{{ event.date }}</p>
+                                <p class="muted">{{ event.expected }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="card">
+                    <h2>Your Return Tracking</h2>
+                    <p class="muted">
+                        You haven't submitted a return request yet.
+                        Your tracking details will appear here after submission.
+                    </p>
+                </div>
+            {% endfor %}
+        </section>
+    </div>
+</main>
+
+{% if result %}
+<div class="overlay" id="resultPopup">
+    <div class="popup">
+        <h2>Return Request Submitted</h2>
+        <p class="muted">Your tracking ID is:</p>
+        <p class="tracking-id">{{ result.tracking_id }}</p>
+
+        <div class="result-score {{ result.risk_level|lower }}">
+            {{ result.risk_score }} / 100
+        </div>
+
+        <p>
+            Risk Level:
+            <strong class="{{ result.risk_level|lower }}">
+                {{ result.risk_level }} Risk
+            </strong>
+        </p>
+
+        <p>
+            Status:
+            <strong>{{ result.status }}</strong>
+        </p>
+
+        {% if result.risk_level == "High" %}
+            <p>
+                Your request has been sent to staff for review.
+            </p>
+        {% else %}
+            <p>Your request has been automatically approved.</p>
+        {% endif %}
+
+        <button type="button"
+                onclick="document.getElementById('resultPopup').remove()">
+            View Dashboard
+        </button>
+    </div>
+</div>
+{% endif %}
+
+</body>
+</html>
